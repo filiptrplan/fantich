@@ -6,7 +6,7 @@ use super::{Machine, RegisterState};
 
 #[test]
 fn set_and_read_u8_registers() {
-    use crate::machine::Register8::*;
+    use crate::machine::registers::Register8::*;
 
     const REG_COUNT: usize = 7;
 
@@ -36,7 +36,7 @@ fn set_and_read_u8_registers() {
 
 #[test]
 fn set_and_read_u16_registers() {
-    use crate::machine::Register16::*;
+    use crate::machine::registers::Register16::*;
 
     const REG_COUNT: usize = 6;
     let mut rng = rand::rng();
@@ -63,11 +63,12 @@ fn set_and_read_u16_registers() {
 
 #[test]
 fn get_flags() {
-    use crate::machine::Flag::*;
+    use crate::machine::registers::Flag::*;
+    use crate::machine::registers::Register16;
     let mut machine = Machine {
         registers: RegisterState::new(),
     };
-    machine.registers.af = 0b00101000;
+    machine.registers.set_u16(Register16::AF, 0b00101000);
     assert_eq!(machine.registers.get_flag(Zero), false);
     assert_eq!(machine.registers.get_flag(Subtraction), true);
     assert_eq!(machine.registers.get_flag(HalfCarry), false);
