@@ -1,0 +1,11 @@
+[package]
+name = "fantich"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Filip Trplan <info@trplan.si>" ]
+description = "A Game Boy emulator"
+readme = "README.md"
+repository = "https://github.com/filiptrplan/fantich"
+license = "AGPL-3.0-only"
+
+[dependencies]
