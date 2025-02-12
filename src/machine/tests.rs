@@ -1,8 +1,7 @@
 use std::array;
 
+use super::Machine;
 use rand::Rng;
-
-use super::{Machine, RegisterState};
 
 #[test]
 fn set_and_read_u8_registers() {
@@ -13,9 +12,7 @@ fn set_and_read_u8_registers() {
     let mut rng = rand::rng();
 
     let reg_bits: [u8; REG_COUNT] = array::from_fn(|_| rng.random());
-    let mut machine = Machine {
-        registers: RegisterState::new(),
-    };
+    let mut machine = Machine::new();
 
     machine.registers.set_u8(A, reg_bits[0]);
     machine.registers.set_u8(B, reg_bits[1]);
@@ -42,9 +39,7 @@ fn set_and_read_u16_registers() {
     let mut rng = rand::rng();
     let reg_bits: [u16; REG_COUNT] = array::from_fn(|_| rng.random::<u16>());
 
-    let mut machine = Machine {
-        registers: RegisterState::new(),
-    };
+    let mut machine = Machine::new();
 
     machine.registers.set_u16(AF, reg_bits[0]);
     machine.registers.set_u16(BC, reg_bits[1]);
@@ -65,9 +60,7 @@ fn set_and_read_u16_registers() {
 fn get_flags() {
     use crate::machine::registers::Flag::*;
     use crate::machine::registers::Register16;
-    let mut machine = Machine {
-        registers: RegisterState::new(),
-    };
+    let mut machine = Machine::new();
     machine.registers.set_u16(Register16::AF, 0b00101000);
     assert_eq!(machine.registers.get_flag(Zero), false);
     assert_eq!(machine.registers.get_flag(Subtraction), true);
