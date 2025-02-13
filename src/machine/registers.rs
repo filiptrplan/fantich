@@ -14,6 +14,7 @@ pub struct RegisterState {
     pc: u16,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum Register8 {
     A,
     B,
@@ -24,6 +25,7 @@ pub enum Register8 {
     L,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum Register16 {
     AF,
     BC,
@@ -66,6 +68,15 @@ impl RegisterState {
             pc: 0,
         }
     }
+
+    pub fn inc_u8(&mut self, register: Register8) {
+        self.set_u8(register, self.get_u8(register) + 1);
+    }
+
+    pub fn dec_u8(&mut self, register: Register8) {
+        self.set_u8(register, self.get_u8(register) - 1);
+    }
+
     pub fn get_u8(&self, register: Register8) -> u8 {
         (match register {
             A => self.af >> 8,
@@ -88,6 +99,14 @@ impl RegisterState {
             H => self.hl.set_high(value),
             L => self.hl.set_low(value),
         };
+    }
+
+    pub fn inc_u16(&mut self, register: Register16) {
+        self.set_u16(register, self.get_u16(register) + 1);
+    }
+
+    pub fn dec_u16(&mut self, register: Register16) {
+        self.set_u16(register, self.get_u16(register) - 1);
     }
 
     pub fn set_u16(&mut self, register: Register16, value: u16) {
