@@ -9,6 +9,7 @@ repository = "https://github.com/filiptrplan/fantich"
 license = "AGPL-3.0-only"
 
 [dependencies]
+thiserror = "2.0.11"
 
 [dev-dependencies]
 rand = "0.9.0"
