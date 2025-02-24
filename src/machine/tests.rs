@@ -1,5 +1,7 @@
 use std::array;
 
+use crate::machine::registers::Register16;
+
 use super::Machine;
 use rand::Rng;
 
@@ -103,9 +105,18 @@ fn setup_machine(initial_rom: &[u8]) -> Machine {
 }
 
 #[test]
-fn decode_block2_add() {
+fn decode_block2() {
     use crate::machine::instructions::*;
-    let machine = setup_machine(&[0b10000011]);
+    let mut machine = setup_machine(&[
+        0b10000011, // add a, e
+        0b10001011, // adc a, e
+    ]);
 
-    assert_eq!(machine.decode_instruction(), Ok(Instruction::AddA(OpR8::E)));
+    let expected_instructions = [Instruction::AddA(OpR8::E), Instruction::AdcA(OpR8::E)];
+
+    for expected in expected_instructions {
+        assert_eq!(machine.decode_instruction(), Ok(expected));
+        // Manually increase program counter because we are only decoding
+        machine.registers.inc_u16(Register16::PC);
+    }
 }

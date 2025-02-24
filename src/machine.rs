@@ -84,7 +84,11 @@ impl Machine {
 
             if byte_inst.match_bits(0b00000000, 0b00111000) {
                 return Ok(Instruction::AddA(operand));
+            } else if byte_inst.match_bits(0b00001000, 0b00111000) {
+                return Ok(Instruction::AdcA(operand));
             }
+
+            // adc a, r8
         }
         Err(DecodeError::NoMatchingInstruction(byte_inst))
     }

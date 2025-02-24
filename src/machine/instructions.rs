@@ -64,7 +64,7 @@ pub enum Operand {
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Instruction {
-    Adc(Operand),
+    AdcA(OpR8),
     AddA(OpR8),
     And(Operand),
     Bit(Operand),
