@@ -103,12 +103,9 @@ fn setup_machine(initial_rom: &[u8]) -> Machine {
 }
 
 #[test]
-fn block2_decode_add() {
+fn decode_block2_add() {
     use crate::machine::instructions::*;
-    let machine = setup_machine(&vec![
-        // add a, e
-        0b10000011,
-    ]);
+    let machine = setup_machine(&[0b10000011]);
 
     assert_eq!(machine.decode_instruction(), Ok(Instruction::AddA(OpR8::E)));
 }
