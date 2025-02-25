@@ -78,7 +78,6 @@ impl Machine {
         let byte_inst = self.read_ram(self.registers.get_u16(Register16::PC));
         // Block 2
         if byte_inst.match_bits(0b10000000, 0b11000000) {
-            // add a, r8
             let operand =
                 OpR8::try_from(byte_inst.extract_bits(0, 2)).map_err(|_| DecodeError::InvalidR8)?;
 
@@ -86,9 +85,19 @@ impl Machine {
                 return Ok(Instruction::AddA(operand));
             } else if byte_inst.match_bits(0b00001000, 0b00111000) {
                 return Ok(Instruction::AdcA(operand));
+            } else if byte_inst.match_bits(0b00010000, 0b00111000) {
+                return Ok(Instruction::SubA(operand));
+            } else if byte_inst.match_bits(0b00011000, 0b00111000) {
+                return Ok(Instruction::SbcA(operand));
+            } else if byte_inst.match_bits(0b00100000, 0b00111000) {
+                return Ok(Instruction::AndA(operand));
+            } else if byte_inst.match_bits(0b00101000, 0b00111000) {
+                return Ok(Instruction::XorA(operand));
+            } else if byte_inst.match_bits(0b00110000, 0b00111000) {
+                return Ok(Instruction::OrA(operand));
+            } else if byte_inst.match_bits(0b00111000, 0b00111000) {
+                return Ok(Instruction::CpA(operand));
             }
-
-            // adc a, r8
         }
         Err(DecodeError::NoMatchingInstruction(byte_inst))
     }

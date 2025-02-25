@@ -110,9 +110,24 @@ fn decode_block2() {
     let mut machine = setup_machine(&[
         0b10000011, // add a, e
         0b10001011, // adc a, e
+        0b10010011, // sub a, e
+        0b10011011, // sbc a, e
+        0b10100011, // and a, e
+        0b10101011, // xor a, e
+        0b10110011, // or a, e
+        0b10111011, // cp a, e
     ]);
 
-    let expected_instructions = [Instruction::AddA(OpR8::E), Instruction::AdcA(OpR8::E)];
+    let expected_instructions = [
+        Instruction::AddA(OpR8::E),
+        Instruction::AdcA(OpR8::E),
+        Instruction::SubA(OpR8::E),
+        Instruction::SbcA(OpR8::E),
+        Instruction::AndA(OpR8::E),
+        Instruction::XorA(OpR8::E),
+        Instruction::OrA(OpR8::E),
+        Instruction::CpA(OpR8::E),
+    ];
 
     for expected in expected_instructions {
         assert_eq!(machine.decode_instruction(), Ok(expected));
