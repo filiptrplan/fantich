@@ -1,3 +1,5 @@
+use super::DecodeError;
+
 /// All the types are derived from this page:
 /// https://gbdev.io/pandocs/CPU_Instruction_Set.html#cpu-instruction-set
 
@@ -64,8 +66,11 @@ pub enum Operand {
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Instruction {
+    /// adc a, r8
     AdcA(OpR8),
+    /// add a, r8
     AddA(OpR8),
+    /// and a, r8
     AndA(OpR8),
     Bit(Operand),
     CallCond(OpCond, Operand),
@@ -83,9 +88,17 @@ pub enum Instruction {
     JpCond(OpCond, Operand),
     Jr(Operand),
     JrCond(OpCond, Operand),
-    Ld(Operand, Operand),
+    /// ld r16, imm16
+    LdR16Imm16(OpR16),
+    /// ld [r16mem], a
+    LdR16MemA(OpR16Mem),
+    /// ld a, [r16mem]
+    LdAR16Mem(OpR16Mem),
+    /// ld [imm16], sp
+    LdImm16SP,
     Ldh(Operand, Operand),
     Nop,
+    /// or a, r8
     OrA(OpR8),
     Pop(Operand),
     Push(Operand),
@@ -100,6 +113,7 @@ pub enum Instruction {
     Rr(Operand),
     Rrca,
     Rst(Operand),
+    /// sbc a, r8
     SbcA(OpR8),
     Scf,
     Set(Operand, Operand),
@@ -107,15 +121,24 @@ pub enum Instruction {
     Sra(Operand),
     Srl(Operand),
     Stop,
+    /// sub a, r8
     SubA(OpR8),
     Swap(Operand),
+    /// xor a, r8
     XorA(OpR8),
 }
 
-impl TryFrom<u8> for OpR8 {
-    type Error = String;
+/// This trait would be redundant but we want to keep our `DecodeError` type private
+/// because there is no valid reason to expose it to other parts of our code
+pub trait DecodeFromU8
+where
+    Self: Sized,
+{
+    fn decode_from(value: u8) -> Result<Self, DecodeError>;
+}
 
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+impl DecodeFromU8 for OpR8 {
+    fn decode_from(value: u8) -> Result<Self, DecodeError> {
         use OpR8::*;
         match value {
             0 => Ok(B),
@@ -126,7 +149,46 @@ impl TryFrom<u8> for OpR8 {
             5 => Ok(L),
             6 => Ok(HL),
             7 => Ok(A),
-            _ => Err(String::from("Values greater than 7 not accepted")),
+            _ => Err(DecodeError::InvalidR8),
+        }
+    }
+}
+
+impl DecodeFromU8 for OpR16 {
+    fn decode_from(value: u8) -> Result<Self, DecodeError> {
+        use OpR16::*;
+        match value {
+            0 => Ok(BC),
+            1 => Ok(DE),
+            2 => Ok(HL),
+            3 => Ok(SP),
+            _ => Err(DecodeError::InvalidR16),
+        }
+    }
+}
+
+impl DecodeFromU8 for OpR16Mem {
+    fn decode_from(value: u8) -> Result<Self, DecodeError> {
+        use OpR16Mem::*;
+        match value {
+            0 => Ok(BC),
+            1 => Ok(DE),
+            2 => Ok(HLPlus),
+            3 => Ok(HLMinus),
+            _ => Err(DecodeError::InvalidR16),
+        }
+    }
+}
+
+impl DecodeFromU8 for OpR16Stk {
+    fn decode_from(value: u8) -> Result<Self, DecodeError> {
+        use OpR16Stk::*;
+        match value {
+            0 => Ok(BC),
+            1 => Ok(DE),
+            2 => Ok(HL),
+            3 => Ok(AF),
+            _ => Err(DecodeError::InvalidR16),
         }
     }
 }

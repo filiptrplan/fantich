@@ -5,7 +5,7 @@ mod tests;
 
 use std::{error::Error, usize};
 
-use instructions::{Instruction, OpR8};
+use instructions::{DecodeFromU8, Instruction, OpR16, OpR16Mem, OpR8};
 use registers::{Register16, RegisterState};
 use thiserror::Error;
 
@@ -19,6 +19,8 @@ pub struct Machine {
 enum DecodeError {
     #[error("invalid R8 operand. only values from 0 to 7 are allowed")]
     InvalidR8,
+    #[error("invalid R16 operand. only values from 0 to 3 are allowed")]
+    InvalidR16,
     #[error("found no matching instruction for: {0:#08b}")]
     NoMatchingInstruction(u8),
 }
@@ -43,7 +45,7 @@ trait ExtractBits {
 
 impl MatchBits for u8 {
     fn match_bits(&self, bits: Self, mask: Self) -> bool {
-        ((self & mask) ^ (bits & self)) == 0
+        ((self & mask) ^ (bits & mask)) == 0
     }
 }
 
@@ -76,10 +78,31 @@ impl Machine {
 
     fn decode_instruction(&self) -> Result<Instruction, DecodeError> {
         let byte_inst = self.read_ram(self.registers.get_u16(Register16::PC));
+        // Block 0
+        if byte_inst.match_bits(0b00000000, 0b11000000) {
+            if byte_inst == 0 {
+                return Ok(Instruction::Nop);
+            }
+            // Load instructions
+            if byte_inst.match_bits(0b00000001, 0b00001111) {
+                return Ok(Instruction::LdR16Imm16(OpR16::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
+            } else if byte_inst.match_bits(0b00000010, 0b00001111) {
+                return Ok(Instruction::LdR16MemA(OpR16Mem::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
+            } else if byte_inst.match_bits(0b00001010, 0b00001111) {
+                return Ok(Instruction::LdAR16Mem(OpR16Mem::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
+            } else if byte_inst == 0b00001000 {
+                return Ok(Instruction::LdImm16SP);
+            }
+        }
         // Block 2
         if byte_inst.match_bits(0b10000000, 0b11000000) {
-            let operand =
-                OpR8::try_from(byte_inst.extract_bits(0, 2)).map_err(|_| DecodeError::InvalidR8)?;
+            let operand = OpR8::decode_from(byte_inst.extract_bits(0, 2))?;
 
             if byte_inst.match_bits(0b00000000, 0b00111000) {
                 return Ok(Instruction::AddA(operand));

@@ -135,3 +135,29 @@ fn decode_block2() {
         machine.registers.inc_u16(Register16::PC);
     }
 }
+
+#[test]
+fn decode_block0() {
+    use crate::machine::instructions::*;
+    let mut machine = setup_machine(&[
+        0,          // nop
+        0b00110001, // ld sp, imm16
+        0b00110010, // ld hl-, a
+        0b00111010, // ld a, hl-
+        0b00001000, // ld [imm16], sp
+    ]);
+
+    let expected_instructions = [
+        Instruction::Nop,
+        Instruction::LdR16Imm16(OpR16::SP),
+        Instruction::LdR16MemA(OpR16Mem::HLMinus),
+        Instruction::LdAR16Mem(OpR16Mem::HLMinus),
+        Instruction::LdImm16SP,
+    ];
+
+    for expected in expected_instructions {
+        assert_eq!(machine.decode_instruction(), Ok(expected));
+        // Manually increase program counter because we are only decoding
+        machine.registers.inc_u16(Register16::PC);
+    }
+}
