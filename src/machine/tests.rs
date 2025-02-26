@@ -145,6 +145,18 @@ fn decode_block0() {
         0b00110010, // ld hl-, a
         0b00111010, // ld a, hl-
         0b00001000, // ld [imm16], sp
+        0b00000011, // inc bc
+        0b00010011, // inc de
+        0b00100011, // inc hl
+        0b00110011, // inc sp
+        0b00001011, // dec bc
+        0b00011011, // dec de
+        0b00101011, // dec hl
+        0b00111011, // dec sp
+        0b00001001, // add hl, bc
+        0b00011001, // add hl, de
+        0b00101001, // add hl, hl
+        0b00111001, // add hl, sp
     ]);
 
     let expected_instructions = [
@@ -153,6 +165,18 @@ fn decode_block0() {
         Instruction::LdR16MemA(OpR16Mem::HLMinus),
         Instruction::LdAR16Mem(OpR16Mem::HLMinus),
         Instruction::LdImm16SP,
+        Instruction::IncR16(OpR16::BC),
+        Instruction::IncR16(OpR16::DE),
+        Instruction::IncR16(OpR16::HL),
+        Instruction::IncR16(OpR16::SP),
+        Instruction::DecR16(OpR16::BC),
+        Instruction::DecR16(OpR16::DE),
+        Instruction::DecR16(OpR16::HL),
+        Instruction::DecR16(OpR16::SP),
+        Instruction::AddHlR16(OpR16::BC),
+        Instruction::AddHlR16(OpR16::DE),
+        Instruction::AddHlR16(OpR16::HL),
+        Instruction::AddHlR16(OpR16::SP),
     ];
 
     for expected in expected_instructions {
