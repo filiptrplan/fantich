@@ -48,50 +48,61 @@ pub enum OpCond {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum Operand {
-    R8(OpR8),
-    R16(OpR16),
-    R16Stk(OpR16Stk),
-    R16Mem(OpR16Mem),
-    Cond(OpCond),
-    /// 3-bit index
-    B3(u8),
-    /// `rst`'s target address, divided by 8
-    Tgt(u8),
-    /// The following byte
-    Imm8(u8),
-    /// The following 2 bytes, LE order
-    Imm16(u16),
-}
-
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Instruction {
     /// adc a, r8
-    AdcA(OpR8),
+    AdcAR8(OpR8),
+    /// adc a, imm8
+    AdcAImm8,
     /// add a, r8
-    AddA(OpR8),
+    AddAR8(OpR8),
     /// add hl, r16
     AddHlR16(OpR16),
+    /// add a, imm8
+    AddAImm8,
     /// and a, r8
-    AndA(OpR8),
-    Bit(Operand),
-    CallCond(OpCond, Operand),
-    Call(Operand),
+    AndAR8(OpR8),
+    /// and a, imm8
+    AndAImm8,
+    /// bit b3, r8
+    BitB3R8(u8, OpR8),
+    /// call cond, imm16
+    CallCondImm16(OpCond, u16),
+    /// call imm16
+    CallImm16(u16),
+    /// ccf
     Ccf,
-    CpA(OpR8),
+    /// cp a, r8
+    CpAR8(OpR8),
+    /// cp a, imm8
+    CpAImm8,
+    /// cpl
     Cpl,
+    /// daa
     Daa,
     /// dec r16
     DecR16(OpR16),
+    /// dec r8
+    DecR8(OpR8),
+    /// di
     Di,
+    /// ei
     Ei,
+    /// halt
     Halt,
     /// inc r16
     IncR16(OpR16),
-    Jp(Operand),
-    JpCond(OpCond, Operand),
-    Jr(Operand),
-    JrCond(OpCond, Operand),
+    /// inc r8
+    IncR8(OpR8),
+    /// jr imm8
+    JrImm8,
+    /// jr cond, imm8
+    JrCondImm8(OpCond),
+    /// jp cond, imm16
+    JpCondImm16(OpCond, u16),
+    /// jp imm16
+    JpImm16(u16),
+    /// jp hl
+    JpHl,
     /// ld r16, imm16
     LdR16Imm16(OpR16),
     /// ld [r16mem], a
@@ -100,36 +111,72 @@ pub enum Instruction {
     LdAR16Mem(OpR16Mem),
     /// ld [imm16], sp
     LdImm16SP,
-    Ldh(Operand, Operand),
+    /// ldh a, [imm8]
+    LdhAImm8(u8),
+    /// ldh [imm8], a
+    LdhImm8A(u8),
+    /// ldh [c], a
+    LdhCA,
+    /// ldh a, [c]
+    LdhAC,
+    /// nop
     Nop,
     /// or a, r8
-    OrA(OpR8),
-    Pop(Operand),
-    Push(Operand),
-    Res(Operand, Operand),
-    RetCond(Operand),
+    OrAR8(OpR8),
+    /// or a, imm8
+    OrAImm8,
+    /// pop r16stk
+    Pop(OpR16Stk),
+    /// push r16stk
+    Push(OpR16Stk),
+    /// res b3, r8
+    ResB3R8(u8, OpR8),
+    /// ret cond
+    RetCond(OpCond),
+    /// ret
     Ret,
+    /// reti
     Reti,
-    Rl(Operand),
+    /// rl r8
+    RlR8(OpR8),
+    /// rla
     Rla,
-    Rlc(Operand),
+    /// rlc r8
+    RlcR8(OpR8),
+    /// rlca
     Rlca,
-    Rr(Operand),
+    /// rr r8
+    RrR8(OpR8),
+    /// rrca
     Rrca,
-    Rst(Operand),
+    /// rst tgt3
+    RstTgt3(u8), // Target address divided by 8 (0x00-0x38)
     /// sbc a, r8
-    SbcA(OpR8),
+    SbcAR8(OpR8),
+    /// sbc a, imm8
+    SbcAImm8,
+    /// scf
     Scf,
-    Set(Operand, Operand),
-    Sla(Operand),
-    Sra(Operand),
-    Srl(Operand),
+    /// set b3, r8
+    SetB3R8(u8, OpR8),
+    /// sla r8
+    SlaR8(OpR8),
+    /// sra r8
+    SraR8(OpR8),
+    /// srl r8
+    SrlR8(OpR8),
+    /// stop
     Stop,
     /// sub a, r8
-    SubA(OpR8),
-    Swap(Operand),
+    SubAR8(OpR8),
+    /// sub a, imm8
+    SubAImm8,
+    /// swap r8
+    SwapR8(OpR8),
     /// xor a, r8
-    XorA(OpR8),
+    XorAR8(OpR8),
+    /// xor a, imm8
+    XorAImm8,
 }
 
 /// This trait would be redundant but we want to keep our `DecodeError` type private
