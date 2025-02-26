@@ -70,6 +70,8 @@ pub enum Instruction {
     AdcA(OpR8),
     /// add a, r8
     AddA(OpR8),
+    /// add hl, r16
+    AddHlR16(OpR16),
     /// and a, r8
     AndA(OpR8),
     Bit(Operand),
@@ -79,11 +81,13 @@ pub enum Instruction {
     CpA(OpR8),
     Cpl,
     Daa,
-    Dec(Operand),
+    /// dec r16
+    DecR16(OpR16),
     Di,
     Ei,
     Halt,
-    Inc(Operand),
+    /// inc r16
+    IncR16(OpR16),
     Jp(Operand),
     JpCond(OpCond, Operand),
     Jr(Operand),

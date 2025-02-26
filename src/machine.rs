@@ -77,6 +77,8 @@ impl Machine {
     }
 
     fn decode_instruction(&self) -> Result<Instruction, DecodeError> {
+        // TODO: This way of checking for instructions requires a lot of branching
+        // maybe think of a way that would be more elegant?
         let byte_inst = self.read_ram(self.registers.get_u16(Register16::PC));
         // Block 0
         if byte_inst.match_bits(0b00000000, 0b11000000) {
@@ -98,6 +100,19 @@ impl Machine {
                 )?));
             } else if byte_inst == 0b00001000 {
                 return Ok(Instruction::LdImm16SP);
+            // Inc, Dec, Add r16
+            } else if byte_inst.match_bits(0b00000011, 0b00001111) {
+                return Ok(Instruction::IncR16(OpR16::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
+            } else if byte_inst.match_bits(0b00001011, 0b00001111) {
+                return Ok(Instruction::DecR16(OpR16::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
+            } else if byte_inst.match_bits(0b00001001, 0b00001111) {
+                return Ok(Instruction::AddHlR16(OpR16::decode_from(
+                    byte_inst.extract_bits(4, 5),
+                )?));
             }
         }
         // Block 2
