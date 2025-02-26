@@ -120,21 +120,21 @@ impl Machine {
             let operand = OpR8::decode_from(byte_inst.extract_bits(0, 2))?;
 
             if byte_inst.match_bits(0b00000000, 0b00111000) {
-                return Ok(Instruction::AddA(operand));
+                return Ok(Instruction::AddAR8(operand));
             } else if byte_inst.match_bits(0b00001000, 0b00111000) {
-                return Ok(Instruction::AdcA(operand));
+                return Ok(Instruction::AdcAR8(operand));
             } else if byte_inst.match_bits(0b00010000, 0b00111000) {
-                return Ok(Instruction::SubA(operand));
+                return Ok(Instruction::SubAR8(operand));
             } else if byte_inst.match_bits(0b00011000, 0b00111000) {
-                return Ok(Instruction::SbcA(operand));
+                return Ok(Instruction::SbcAR8(operand));
             } else if byte_inst.match_bits(0b00100000, 0b00111000) {
-                return Ok(Instruction::AndA(operand));
+                return Ok(Instruction::AndAR8(operand));
             } else if byte_inst.match_bits(0b00101000, 0b00111000) {
-                return Ok(Instruction::XorA(operand));
+                return Ok(Instruction::XorAR8(operand));
             } else if byte_inst.match_bits(0b00110000, 0b00111000) {
-                return Ok(Instruction::OrA(operand));
+                return Ok(Instruction::OrAR8(operand));
             } else if byte_inst.match_bits(0b00111000, 0b00111000) {
-                return Ok(Instruction::CpA(operand));
+                return Ok(Instruction::CpAR8(operand));
             }
         }
         Err(DecodeError::NoMatchingInstruction(byte_inst))

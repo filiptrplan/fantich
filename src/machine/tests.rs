@@ -119,14 +119,14 @@ fn decode_block2() {
     ]);
 
     let expected_instructions = [
-        Instruction::AddA(OpR8::E),
-        Instruction::AdcA(OpR8::E),
-        Instruction::SubA(OpR8::E),
-        Instruction::SbcA(OpR8::E),
-        Instruction::AndA(OpR8::E),
-        Instruction::XorA(OpR8::E),
-        Instruction::OrA(OpR8::E),
-        Instruction::CpA(OpR8::E),
+        Instruction::AddAR8(OpR8::E),
+        Instruction::AdcAR8(OpR8::E),
+        Instruction::SubAR8(OpR8::E),
+        Instruction::SbcAR8(OpR8::E),
+        Instruction::AndAR8(OpR8::E),
+        Instruction::XorAR8(OpR8::E),
+        Instruction::OrAR8(OpR8::E),
+        Instruction::CpAR8(OpR8::E),
     ];
 
     for expected in expected_instructions {
